@@ -16,7 +16,7 @@ class Producer:
     def publish(self, message):
         self.producer.send(self.topic, message)
         self.producer.flush()
-        print("הטעינה הושלמה!")
+
 
 p = Producer()
 p.publish(Loader().get_metadata())
