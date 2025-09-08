@@ -2,7 +2,6 @@ from kafka import KafkaProducer
 import os
 from dotenv import load_dotenv
 import json
-from loader import Loader
 
 load_dotenv()
 
@@ -13,10 +12,7 @@ class Producer:
             bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
             value_serializer=lambda v: json.dumps(v).encode("utf-8"))
 
-    def publish(self, message):
-        self.producer.send(self.topic, message)
+    def publish(self, list_metadata):
+        for metadata in list_metadata:
+            self.producer.send(self.topic, metadata)
         self.producer.flush()
-
-
-p = Producer()
-p.publish(Loader().get_metadata())
