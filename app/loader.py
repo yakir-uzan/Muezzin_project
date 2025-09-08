@@ -23,7 +23,3 @@ class Loader:
             }
             list_metadata.append(metadata)
         return list_metadata
-
-
-l = Loader()
-l.get_metadata()
