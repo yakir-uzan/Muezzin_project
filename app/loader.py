@@ -22,9 +22,8 @@ class Loader:
                 "created_at": datetime.datetime.fromtimestamp(file.stat().st_ctime).isoformat()
             }
             list_metadata.append(metadata)
-
-        return json.dumps(list_metadata, indent=4)
+        return list_metadata
 
 
 l = Loader()
-print(l.get_metadata())
+l.get_metadata()
