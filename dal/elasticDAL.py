@@ -1,31 +1,47 @@
 from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
 import os
+from logger import Logger
 
 load_dotenv()
+logger = Logger.get_logger()
 
 class ElasticDAL:
     def __init__(self):
-        self.index = os.getenv("ELASTIC_INDEX", "muezzin")
-        self.client = Elasticsearch(
-            os.getenv("ELASTIC_HOST", "http://localhost:9200"),
-            basic_auth=(
-                os.getenv("ELASTIC_USER", "elastic"),
-                os.getenv("ELASTIC_PASSWORD", "pass")),
-            verify_certs=False)
+        try:
+            logger.info("Creates connection with elastic...")
+            self.index = os.getenv("ELASTIC_INDEX")
+            self.client = Elasticsearch(
+                os.getenv("ELASTIC_HOST"),
+                basic_auth=(os.getenv("ELASTIC_USER"), os.getenv("ELASTIC_PASSWORD")),
+                verify_certs=False)
+            logger.info(f"connected to elastic in address {os.getenv("ELASTIC_HOST")} successful!\n")
 
-        if not self.client.indices.exists(index=self.index):
-            self.create_index()
+        except Exception as e:
+            logger.error(f"Connection to Elastic failed... : {e}")
+
 
     def create_index(self):
-        mapping = {"mappings": {"properties": {
-                    "id": {"type": "keyword"},
+        mapping = {"mappings": {"properties":
+                    {"id": {"type": "keyword"},
                     "file_name": {"type": "text"},
                     "file_path": {"type": "text"},
                     "file_size_bytes": {"type": "long"},
-                    "created_at": {"type": "date"}}}}
+                    "created_at": {"type": "date"},
+                    "transcriber": {"type": "text"}}}}
+        try:
+            if self.client.indices.exists(index=self.index):
+                self.client.indices.delete(index=self.index)
+                self.client.indices.create(index=self.index, body=mapping)
+                logger.info(f"Index {self.index} creation completed!\n")
 
-        self.client.indices.create(index=self.index, body=mapping)
+        except Exception as e:
+            logger.error(f"Index {self.index} creation failed... {e}")
 
-    def upload(self, doc):
-        self.client.index(index=self.index, id=doc["id"], document=doc)
+
+    def upload_to_elastic(self, doc):
+        try:
+            self.client.index(index=self.index, id=doc["id"], document=doc)
+            logger.info(f"Upload to elastic file with id: {doc["id"]}")
+        except Exception as e:
+            logger.error(f"\nUpload to Elastic failed... : {e}")
