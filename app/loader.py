@@ -1,4 +1,3 @@
-import json
 import pathlib
 import os
 from dotenv import load_dotenv
@@ -13,8 +12,8 @@ class Loader:
         self.path_env = os.getenv("PATH_FILE")
         self.path = pathlib.Path(self.path_env)
         self.all_path = [item for item in self.path.iterdir() if item.is_file()]
-        logger.info(f"Loader with path: {self.path_env}")
-        logger.debug(f"Files found: {[file.name for file in self.all_path]}")
+        logger.info(f"Loading files from a path: {self.path_env}...")
+        logger.info("Loading completed successfully!\n")
 
     def get_metadata(self):
         list_metadata = []
@@ -27,9 +26,8 @@ class Loader:
                     "created_at": datetime.datetime.fromtimestamp(file.stat().st_ctime).isoformat()}
 
                 list_metadata.append(metadata)
-                logger.debug(f"Metadata extracted for file: {file.name}")
+                logger.info(f"Metadata extracted for file: {file.name}")
 
             except Exception as e:
                 logger.error(f"Failed to extract metadata from {file.name}: {e}")
-            logger.info(f"Extracted metadata for {len(list_metadata)} files.")
         return list_metadata

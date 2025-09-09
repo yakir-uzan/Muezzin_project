@@ -3,6 +3,7 @@ from producer import Producer
 from processor import Processor
 from dal.elasticDAL import ElasticDAL
 from dal.mongoDAL import MongoDAL
+from transcriber import Transcriber
 
 
 def main():
@@ -11,10 +12,8 @@ def main():
     metadata = loader.get_metadata()
 
     # שליחת המטאדאטה לקאפקה
-    print("send massages to kafka... ")
     producer = Producer()
     producer.publish(metadata)
-    print("all items sent to kafka!")
 
     # יצירת איידיז לכל המטאדאטה
     processor = Processor()
@@ -23,20 +22,25 @@ def main():
         item["id"] = processor.generate_id(item)
         enriched.append(item)
 
-    # for item in enriched:
-    #     print(item)
-
     # שליחה לאלסטיק
     elastic = ElasticDAL()
+    elastic.create_index()
     for item in enriched:
-        elastic.upload(item)
-    print("upload all items to elastic")
+        elastic.upload_to_elastic(item)
 
     # שליחה למונגו
     mongo = MongoDAL()
     for item in enriched:
         mongo.upload_file(item["file_path"], item["id"])
-    print("upload all items to mongoDB")
+
+
+    # תמלול הטקסט ודחיפה לאלסטיק
+    transcriber = Transcriber()
+    for item in enriched:
+        text = transcriber.transcribe_audio(item["file_path"])
+        if text:
+            transcriber.update_elastic(item["id"], text)
+    #print("all files have been uploaded to elastic!!!")
 
 
 if __name__ == "__main__":

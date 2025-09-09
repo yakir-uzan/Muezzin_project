@@ -20,8 +20,11 @@ class Consumer:
 
 
     def listen(self):
-        logger.info("consumer started listening...")
-        for message in self.consumer:
-            logger.info("Received message from Kafka")
-            print(json.dumps(message.value, indent=4))
+        try:
+            logger.info("consumer started listening...")
+            for message in self.consumer:
+                logger.info("Received message from Kafka")
+                #print(json.dumps(message.value, indent=4))
+        except Exception as e:
+            logger.error(f"consumer failed to listening: {e}")
 

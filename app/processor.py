@@ -1,5 +1,4 @@
 import hashlib
-from loader import Loader
 
 class Processor:
     @staticmethod

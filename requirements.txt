@@ -1,0 +1,6 @@
+SpeechRecognition
+pymongo
+pathlib
+datetime
+kafka-python
+elasticsearch==8.15.0
