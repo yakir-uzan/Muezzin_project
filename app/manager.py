@@ -1,6 +1,6 @@
 from loader import Loader
 from producer import Producer
-from processor import Processor
+from gen_id import Generate
 from dal.elasticDAL import ElasticDAL
 from dal.mongoDAL import MongoDAL
 from transcriber import Transcriber
@@ -16,10 +16,10 @@ def main():
     producer.publish(metadata)
 
     # יצירת איידיז לכל המטאדאטה
-    processor = Processor()
+    gen = Generate()
     enriched = []
     for item in metadata:
-        item["id"] = processor.generate_id(item)
+        item["id"] = gen.generate_id(item)
         enriched.append(item)
 
     # שליחה לאלסטיק
