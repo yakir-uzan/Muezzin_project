@@ -1,6 +1,6 @@
 import hashlib
 
-class Processor:
+class Generate:
     @staticmethod
     def generate_id(metadata):
         json_str = str(sorted(metadata.items()))
