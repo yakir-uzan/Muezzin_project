@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch
 from dotenv import load_dotenv
 import os
-from logger import Logger
+from utils.logger import Logger
 
 load_dotenv()
 logger = Logger.get_logger()
@@ -42,6 +42,6 @@ class ElasticDAL:
     def upload_to_elastic(self, doc):
         try:
             self.client.index(index=self.index, id=doc["id"], document=doc)
-            logger.info(f"Upload to elastic file with id: {doc["id"]}")
+            logger.info(f"Upload to elastic file with id: {doc['id']}")
         except Exception as e:
             logger.error(f"\nUpload to Elastic failed... : {e}")

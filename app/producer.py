@@ -2,7 +2,7 @@ from kafka import KafkaProducer
 import os
 from dotenv import load_dotenv
 import json
-from logger import Logger
+from utils.logger import Logger
 
 load_dotenv()
 logger = Logger.get_logger()
