@@ -1,9 +1,9 @@
 from consumer import Consumer
-from logger import Logger
+from utils.logger import Logger
 
 logger = Logger.get_logger()
 
-def main():
+def run_consumer():
     logger.info("Listening has begun...")
     try:
         consumer = Consumer()
@@ -14,4 +14,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_consumer()

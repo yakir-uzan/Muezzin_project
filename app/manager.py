@@ -1,12 +1,20 @@
+from logging.config import listen
+
 from loader import Loader
 from producer import Producer
 from gen_id import Generate
 from dal.elasticDAL import ElasticDAL
 from dal.mongoDAL import MongoDAL
 from transcriber import Transcriber
+# from lisen_manager import run_consumer
+from analyze.analyzer import AnalyzeText
 
 
 def main():
+
+    # הפעלת הקונסומר
+    # run_consumer()
+
     # יצירת מופע ללאודר והשמת המטאדאטה במשתנה
     loader = Loader()
     metadata = loader.get_metadata()
@@ -40,7 +48,11 @@ def main():
         text = transcriber.transcribe_audio(item["file_path"])
         if text:
             transcriber.update_elastic(item["id"], text)
-    #print("all files have been uploaded to elastic!!!")
+
+
+    # ניתוח הטקסט ודחיפת שדות חדשים לאלסטיק
+    analyzer = AnalyzeText()
+    analyzer.upload_to_elastic(field="transcription", size=10000)
 
 
 if __name__ == "__main__":

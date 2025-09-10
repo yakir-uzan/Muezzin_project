@@ -1,6 +1,6 @@
 import speech_recognition as sr
 from dal.elasticDAL import ElasticDAL
-from logger import Logger
+from utils.logger import Logger
 
 logger = Logger.get_logger()
 
@@ -26,7 +26,6 @@ class Transcriber:
         try:
             self.elastic.client.update(index=self.elastic.index, id=doc_id, body={"doc": {"transcription": transcription}})
             logger.info(f"Updated transcription in Elastic for id: {doc_id}")
-            logger.info("Updated all text to Elastic")
 
         except Exception as e:
             logger.error(f"Failed to update Elastic document {doc_id}: {e}")
